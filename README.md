@@ -4,5 +4,5 @@ Made by me ofc lmao
 
 Dont ask me why I made that
 
-### 50 stars = open source
+### open source tommorow
 join https://discord.gg/tokenz btw
