@@ -271,6 +271,9 @@ def genandjoin(link):
         header = {"authorization": token}
         r = requests.post("https://discord.com/api/v8/invites/{}".format(link), proxies=proxies, headers=header1)
 
+    codes = open('generated_tokens.txt', 'a')
+    codes.write('\n' + token)
+    codes.close()
     print_important("Saved token to generated_tokens.txt. " + "(" + token + ")")
 
 def main_screen():
