@@ -174,10 +174,10 @@ else:
     print(f"{Fore.LIGHTWHITE_EX}                                    \\______/       ".center(width))
     print(''")
     print(f"{Fore.LIGHTWHITE_EX}Made by bambiku#7777, version: {Fore.LIGHTBLUE_EX} 0.3".center(width))
-    print(''")
+    print('')
     os.system("cls")
 
-    print(''")
+    print('')
     print(f"{Fore.BLUE} $$$$$$\\  $$\\           $$\\                     ".center(width))
     print(f"{Fore.CYAN}$$  __$$\\ $$ |          $$ |                     ".center(width))
     print(f"{Fore.GREEN}$$ /  \\__|$$ | $$$$$$\\  $$$$$$$\\  $$\\   $$\\      ".center(width))
