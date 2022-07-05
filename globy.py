@@ -173,7 +173,7 @@ else:
     print(f"{Fore.LIGHTCYAN_EX}                                   $$\\   $$ |      ".center(width))
     print(f"{Fore.LIGHTBLUE_EX}                                   \\$$$$$$  |     ".center(width))
     print(f"{Fore.LIGHTWHITE_EX}                                    \\______/       ".center(width))
-    print(''")
+    print('')
     print(f"{Fore.LIGHTWHITE_EX}Made by bambiku#7777, version: {Fore.LIGHTBLUE_EX} 0.3".center(width))
     print('')
     os.system("cls")
