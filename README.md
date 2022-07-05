@@ -17,10 +17,10 @@ Dont ask me why I made that
 
 ## Features
 
-- Light/dark mode toggle
-- Live previews
-- Fullscreen mode
-- Cross platform
+- very proffesional look
+- very fast (profit)
+- fre money :shock:!!1
+- people love you
 
 
 ## Installation
