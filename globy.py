@@ -8,7 +8,7 @@ import discord, json, requests, os, httpx, base64, time, subprocess
 init()
 emails = [
  'gmail.com', 'seksownyczlowiek.fun', 'yahoo.com', 'discordsupport.space', 'velipsemail.fun', 'asshole.fun', 'voicerecorder.fun']
-MEDAL_USER_AGENT = 'Medal-Electron/4.1674.0 (string_id_v2; no_upscale) win32/10.0.19042 (x64) Electron/8.5.5 Recorder/1.0.0 Node/12.13.0 Chrome/80.0.3987.163 Environment/production'
+MEDAL_USER_AGENT = 'Medal-Electron/4.1674.0 (string_id_v2; no_upscale) win32/10.0.19042 (x64) Electron/8.5.5 Recorder/1.0.0 Node/12.13.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36 Environment/production'
 randomStr = ''.join(random.choices((string.ascii_lowercase), k=8))
 email = randomStr + 'seks.fun'
 userName = 'Globy ' + randomStr
