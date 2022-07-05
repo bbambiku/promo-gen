@@ -10,7 +10,7 @@ import os
 import random
 from fresh_useragent import UserAgent
 
-fresh_useragent = Useragent()
+fresh_useragent = UserAgent()
 
 headers = {
     "Host": "hcaptcha.com",
