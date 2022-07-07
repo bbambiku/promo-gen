@@ -344,7 +344,7 @@ def start():
         main_screen()
         for i in range(threads):
             proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
-            t = Thread(target=generate, args=[proxyDict])
+            t = Thread(target=generate)
             t.start()
             #print_info(proxyDict)
     else:
