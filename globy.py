@@ -1,26 +1,34 @@
-import requests, json, string, random, os, logging, asyncio, time, datetime
+import requests, json, string, random, os, logging, asyncio, time, datetime, socket
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from colorama import Fore, init
 from termcolor import colored, cprint
 from urllib import request
+import urllib3
+from urllib3 import *
 import discord, json, requests, os, httpx, base64, time, subprocess
 from threading import Thread
-from hcapbypass import bypass
+from captchatools import captcha_harvesters, exceptions
+import captchatools
+from requests_futures.sessions import FuturesSession
+from requests.sessions import session
+from requests.api import head
 import gratient
-from fresh_useragent import UserAgent
+import ctypes
+import psutil
+import ssl
 
+ssl._create_default_https_context = ssl._create_unverified_context
 emails = [
  'gmail.com', 'seksownyczlowiek.fun', 'yahoo.com', 'discordsupport.space', 'velipsemail.fun', 'asshole.fun', 'voicerecorder.fun']
 #MEDAL_USER_AGENT = 'Medal-Electron/4.1674.0 (string_id_v2; no_upscale) win32/10.0.19042 (x64) Electron/8.5.5 Recorder/1.0.0 Node/12.13.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36 Environment/production'
 MEDAL_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.61 Safari/537.36'
 randomStr = ''.join(random.choices((string.ascii_lowercase), k=8))
 email = randomStr + 'seks.fun'
-userName = 'Globy ' + randomStr
+username = 'Globy ' + randomStr
 password = randomStr
 tokens = open('tokens.txt').read().splitlines()
 DISCORD_TOKEN = random.choice(tokens)
-os.system('title Globy Gen')
 width = os.get_terminal_size().columns
 now = datetime.datetime.utcnow()
 printSpaces = ''
@@ -31,12 +39,20 @@ with open('proxies.txt', 'r') as (f):
     for line1 in file_lines1:
         proxy.add(line1.strip())
 
+with open('config.json') as r:
+	config = json.load(r)
+
 proxies = {'http': 'http://' + random.choice(list(proxy))}
-fresh_useragent = UserAgent() 
+socket.getaddrinfo("discord.com", 443) 
 def random_char(y):
     return ''.join(random.choice(string.ascii_letters) for x in range(y))
 
-def generate():
+captcha_api_key = config.get('CaptchaKey')
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+register_link = "https://discordapp.com/api/auth/register"
+
+def generate(proxy):
     tokens = open('tokens.txt').read().splitlines()
     DISCORD_TOKEN = random.choice(tokens)
     if ':' in DISCORD_TOKEN:
@@ -59,25 +75,21 @@ def generate():
     MEDAL_USER_AGENT = 'Medal-Electron/4.1674.0 (string_id_v2; no_upscale) win32/10.0.19042 (x64) Electron/8.5.5 Recorder/1.0.0 Node/12.13.0 Chrome/80.0.3987.163 Environment/production'
     randomStr = ''.join(random.choices((string.ascii_lowercase), k=8))
     email = randomStr + '@' + random.choice(emails)
-    userName = 'Globy ' + randomStr
+    username = 'Globy ' + randomStr
     password = randomStr
     print_info(f"Creating account... ({email})")
-    register = requests.post('https://medal.tv/api/users', json={'email':email,  'userName':userName,  'password':password}, headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT}, proxies=proxies)
+    register = requests.post("https://medal.tv/api/users", json={"email":email,  "userName":username,  "password":password}, headers={"Accept":"application/json",  "Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT}, proxies=proxy)
     if not register.ok:
         print_error(register.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate()
-    authenticate = requests.post('https://medal.tv/api/authentication', json={'email':email,
-     'password':password},
-      headers={'Accept':'application/json',
-     'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT},
-      proxies=proxies)
+        generate(proxyDict)
+    authenticate = requests.post("https://medal.tv/api/authentication", json={"email":email,"password":password},headers={"Accept":"application/json","Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT}, proxies=proxy)
     if not authenticate.ok:
         print_error(authenticate.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate()
+        generate(proxyDict)
     authResp = json.loads(authenticate.text)
     token = authResp['userId'] + ',' + authResp['key']
     discordOauth = requests.post('https://medal.tv/social-api/connections', json={'provider': 'discord'}, headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxies)
@@ -85,13 +97,13 @@ def generate():
         print_error(discordOauth.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate()
-    doOauth = requests.post((json.loads(discordOauth.text)['loginUrl']), headers={'Authorization':DISCORD_TOKEN,  'Content-Type':'application/json'}, json={'permissions':'0',  'authorize':'true'}, proxies=proxies)
+        generate(proxyDict)
+    doOauth = requests.post((json.loads(discordOauth.text)['loginUrl']), headers={'Authorization':DISCORD_TOKEN,  'Content-Type':'application/json'}, json={'permissions':'0',  'authorize':'true'}, proxies=proxy)
     if not doOauth.ok:
         print_error(doOauth.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate()
+        generate(proxyDict)
     medalLink = json.loads(doOauth.text)['location']
     oauthDone = requests.get(medalLink)
     oauthResponse = parse_qs(urlparse(oauthDone.url).query)
@@ -99,8 +111,8 @@ def generate():
         print_error(oauthResponse['message'][0])
         print_info('Retrying...')
         time.sleep(0.01)
-        generate()
-    nitroLink = requests.get('https://medal.tv/api/social/discord/nitroCode', headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxies)
+        generate(proxyDict)
+    nitroLink = requests.get("https://medal.tv/api/social/discord/nitroCode", headers={"Accept":"application/json",  "Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT,  "X-Authentication":token}, proxies=proxy)
     nitro = json.loads(nitroLink.text)
     print_detect(nitro)
     try:
@@ -116,167 +128,166 @@ def generate():
         print('')
         randomStr = ''.join(random.choices((string.ascii_lowercase), k=8))
         email = randomStr + '@' + random.choice(emails)
-        userName = 'Globy ' + randomStr
+        username = 'Globy ' + randomStr
         password = randomStr + '!1'
-        generate()
-        deleteRes = requests.delete(('https://medal.tv/api/users/' + authResp['userId'] + '/connections/discord'), headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxies)
+        generate(proxyDict)
+        deleteRes = requests.delete(('https://medal.tv/api/users/' + authResp['userId'] + '/connections/discord'), headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxy)
         if not deleteRes.ok:
             print_error(deleteRes.text)
             print_info('Retrying...')
             time.sleep(0.01)
-            generate()
+            generate(proxyDict)
 
 
 def getCurrentTime():
     return datetime.datetime.utcnow().strftime('%H:%M:%S')
 def print_important(message):
-    print(f"{printSpaces}{Fore.BLUE}[{getCurrentTime()}] {Fore.RED}[IMPORTANT] {Fore.GREEN}{message}".center(width))
+    print(gratient.purple(f"{printSpaces}[{getCurrentTime()}] [IMPORTANT] {message}".center(width)))
 def print_info(message):
-    print(f"{printSpaces}{Fore.BLUE}[{getCurrentTime()}] {Fore.WHITE}[INFORMATION] {Fore.GREEN}{message}".center(width))
-def print_cmd(command):
-    print(f"{printSpaces}{Fore.BLUE}[{getCurrentTime()}] {Fore.WHITE}[COMMAND] {Fore.GREEN}{command}".center(width))
-def print_sharecmd(author, command):
-    print(f"{printSpaces}{Fore.BLUE}[{getCurrentTime()}] {Fore.WHITE}[SHARE COMMAND] {Fore.GREEN}({author}) {command}".center(width))
+    print(gratient.blue(f"{printSpaces}[{getCurrentTime()}] [INFORMATION] {message}".center(width)))
 def print_error(error):
-    print(f"{printSpaces}{Fore.BLUE}[{getCurrentTime()}] {Fore.RED}[ERROR] {Fore.GREEN}{error}".center(width))
+    print(gratient.red(f"{printSpaces}[{getCurrentTime()}] [ERROR] {error}".center(width)))
 def print_detect(message):
-    print(f"{printSpaces}{Fore.BLUE}[{getCurrentTime()}] {Fore.WHITE}[DEBUG] {Fore.RED}{message}".center(width))
-def print_sniper(message):
-    print(f"{printSpaces}{Fore.BLUE}[{getCurrentTime()}] {Fore.WHITE}[SNIPER] {Fore.GREEN}{message}".center(width))
-def print_sniper_info(firstmessage, secondmessage):
-    spaces = ''
+    print(gratient.yellow(f"{printSpaces}[{getCurrentTime()}] [DEBUG] {message}".center(width)))
+def print_ascii(message):
+    print(gratient.yellow(f"{message}".center(width)))
 
-def genandjoin(link):
-    s = requests.session()
-    proxy = set()
-    with open('proxies.txt', 'r') as (f):
-        file_lines1 = f.readlines()
-        for line1 in file_lines1:
-            proxy.add(line1.strip())
+def balance():
+    session = FuturesSession()
+    try:
+        json = {
+            "clientKey": captcha_api_key
+        }
+        r = session.post('https://api.capmonster.cloud/getBalance', json=json, ).result()
+        if r.json()['errorId'] == 1:
+            return 'error, information about it is in the errorCode property'
+        if r.json()['errorId'] == 0:
+            return r.json()['balance']
+    except:
+        pass
 
-    proxies = {
-        "all://": "http://" + random.choice(list(proxy)),
+def get_user_agent():
+    return ("Windows", "Firefox", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0", "54.0", "7")
+
+def get_super_properties(os, browser, useragent, browser_version, os_version, client_build):
+    return {
+        "os": os,
+        "browser": browser,
+        "device": "",
+        "browser_user_agent": MEDAL_USER_AGENT,
+        "browser_version": browser_version,
+        "os_version": os_version,
+        "referrer": "",
+        "referring_domain": "",
+        "referrer_current": "",
+        "referring_domain_current": "",
+        "release_channel": "stable",
+        "client_build_number": client_build,
+        "client_event_source": None
     }
+
+def get_headers():
+    return {
+        'Host': 'discordapp.com',
+        'Accept': '*/*',
+        'Accept-Language': 'en-US',
+        'Content-Type': 'application/json',
+        'Referer': 'https://discordapp.com/register',
+        'Origin': 'https://discordapp.com',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'user-agent': "",
+        'X-Fingerprint': "",
+        'X-Super-Properties': ''
+    }
+
+def genandjoin(link, proxies):
+    #proxies = open('proxies.txt','r').read().splitlines()
+    #proxies = [{'http://' : f'{proxy}'} for proxy in proxies]
+
     username = "Globy | " + random_char(10)
     email =  random_char(9) + "@" + random_char(4) + ".com"
     password = random_char(11)
+    headers = get_headers()
+    os, browser, headers['user-agent'], browserver, osvers = get_user_agent()
+    r = requests.Session()
+    fingerprint_json = requests.get("https://discordapp.com/api/v9/experiments",
+                                    timeout=10, proxies = proxies, headers=get_headers() , verify=False).json()
+    fingerprint = fingerprint_json["fingerprint"]
+    xsuperprop = base64.b64encode(json.dumps(get_super_properties(
+        os, browser, headers['user-agent'], browserver, osvers, 36127), separators=",:").encode()).decode()
+    headers['X-Super-Properties'] = xsuperprop
 
-    header1 = {
-        "Host": "discord.com",
-        "Connection": "keep-alive",
-        "User-Agent": fresh_useragent,
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-        "Sec-Fetch-Site": "none",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-User": "?1",
-        "Sec-Fetch-Dest": "document",
-        "sec-ch-ua": '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
-        "sec-ch-ua-mobile": "?0",
-        "Upgrade-Insecure-Requests": "1",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "en-us,en;q=0.9",
-    }
-
-    getcookie = httpx.get("https://discord.com/register").headers['set-cookie']
-    sep = getcookie.split(";")
-    sx = sep[0]
-    sx2 = sx.split("=")
-    dfc = sx2[1]
-    split = sep[6]
-    split2 = split.split(",")
-    split3 = split2[1]
-    split4 = split3.split("=")
-    sdc = split4[1]
-
-    header2 = {
-        "Host": "discord.com",
-        "Connection": "keep-alive",
-        "sec-ch-ua": '"Chromium";v="92", " Not A;Brand";v="99", "Microsoft Edge";v="92"',
-        "X-Super-Properties": "eyJvcyI6Ik1hYyBPUyBYIiwiYnJvd3NlciI6IkNocm9tZSIsImRldmljZSI6IiIsInN5c3RlbV9sb2NhbGUiOiJlbi1VUyIsImJyb3dzZXJfdXNlcl9hZ2VudCI6Ik1vemlsbGEvNS4wIChNYWNpbnRvc2g7IEludGVsIE1hYyBPUyBYIDEwXzE1XzcpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS85Mi4wLjQ1MTUuMTMxIFNhZmFyaS81MzcuMzYiLCJicm93c2VyX3ZlcnNpb24iOiI5Mi4wLjQ1MTUuMTMxIiwib3NfdmVyc2lvbiI6IjEwLjE1LjciLCJyZWZlcnJlciI6IiIsInJlZmVycmluZ19kb21haW4iOiIiLCJyZWZlcnJlcl9jdXJyZW50IjoiIiwicmVmZXJyaW5nX2RvbWFpbl9jdXJyZW50IjoiIiwicmVsZWFzZV9jaGFubmVsIjoic3RhYmxlIiwiY2xpZW50X2J1aWxkX251bWJlciI6OTI3OTIsImNsaWVudF9ldmVudF9zb3VyY2UiOm51bGx9",
-        "X-Context-Properties": "eyJsb2NhdGlvbiI6IlJlZ2lzdGVyIn0=",
-        "Accept-Language": "en-US",
-        "sec-ch-ua-mobile": "?0",
-        "User-Agent": fresh_useragent,
-        "Authorization": "undefined",
-        "Accept": "*/*",
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Dest": "empty",
-        "Referer": "https://discord.com/register",
-        "Accept-Encoding": "gzip, deflate, br"
-    }
-
-    fingerprintres = httpx.get("https://discord.com/api/v9/experiments", timeout=10)
-
-    while True:
-        if fingerprintres.text != "":
-            fingerprint = fingerprintres.json()['fingerprint']
-            break
-        else:
-            return True
-
+    API_KEY = f"{captcha_api_key}"
     sitekey = "f5561ba9-8f1e-40ca-9b5b-a0b3f719ef34"
+    #sitekey = "3ceb8624-1970-4e6b-91d5-70317b70b651"
 
-    while True:
-        captchakey = bypass(sitekey, "discord.com", proxy="")
-        if captchakey == "False":
-            continue
-        else:
-            break
+    solver = captcha_harvesters(solving_site=1, api_key=f"{API_KEY}", sitekey=f"{sitekey}", captcha_type="hcap", captcha_url="https://discord.com/register")
+    recaptcha_answer = solver.get_token()
 
-    print_info("Captcha Solved (prob.)")
+    Title = f"Globy Gen | Current Balance: {balance()}"
+    ctypes.windll.kernel32.SetConsoleTitleW(Title)
+    print_info(f"Captcha Solved: {balance()}")
 
-    header3 = {
-
-        "Host": "discord.com",
-        "Connection": "keep-alive",
-        "sec-ch-ua": '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
-        "X-Super-Properties": "eyJvcyI6Ik1hYyBPUyBYIiwiYnJvd3NlciI6IkNocm9tZSIsImRldmljZSI6IiIsInN5c3RlbV9sb2NhbGUiOiJlbi1VUyIsImJyb3dzZXJfdXNlcl9hZ2VudCI6Ik1vemlsbGEvNS4wIChNYWNpbnRvc2g7IEludGVsIE1hYyBPUyBYIDEwXzE1XzcpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS85Mi4wLjQ1MTUuMTMxIFNhZmFyaS81MzcuMzYiLCJicm93c2VyX3ZlcnNpb24iOiI5Mi4wLjQ1MTUuMTMxIiwib3NfdmVyc2lvbiI6IjEwLjE1LjciLCJyZWZlcnJlciI6IiIsInJlZmVycmluZ19kb21haW4iOiIiLCJyZWZlcnJlcl9jdXJyZW50IjoiIiwicmVmZXJyaW5nX2RvbWFpbl9jdXJyZW50IjoiIiwicmVsZWFzZV9jaGFubmVsIjoic3RhYmxlIiwiY2xpZW50X2J1aWxkX251bWJlciI6OTI3OTIsImNsaWVudF9ldmVudF9zb3VyY2UiOm51bGx9",
-        "X-Fingerprint": fingerprint,
-        "Accept-Language": "en-US",
-        "sec-ch-ua-mobile": "?0",
-        "User-Agent": fresh_useragent,
-        "Content-Type": "application/json",
-        "Authorization": "undefined",
-        "Accept": "*/*",
-        "Origin": "https://discord.com",
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Dest": "empty",
-        "Referer": "https://discord.com/register",
-        "X-Debug-Options": "bugReporterEnabled",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Cookie": f"__dcfduid={dfc}; __sdcfduid={sdc}"
-
+    payload = {
+        'fingerprint': fingerprint,
+        'email': email,
+        'username': username,
+        'password': password,
+        'invite': f"{link}",
+        'captcha_key': recaptcha_answer,
+        'consent': True,
+        "date_of_birth": "2001-01-01",
+        'gift_code_sku_id': None
     }
+    payload = json.dumps(payload)
+    response = r.post('https://discordapp.com/api/v9/auth/register',
+                json=payload, proxies=proxies,headers=headers, timeout=15000, verify=False)
+    #if 'token' in str(response):
+    try:
+        sex = response.json()
+        token = sex['token']
+        print_info("Registered: " + token)
+        codes = open('generated_tokens.txt', 'a')
+        codes.write(f"{email}:{password}:{token}\n")
+        codes.close()
+        print_important("Saved token to generated_tokens.txt. " + "(" + token + ")")
+    except Exception as e:
+        print_error(f'Something went wrong :skull:')
+        print_error(f'{e}')
 
-    payload = {"fingerprint": fingerprint,
-                "email": email,
-                "username": username,
-                "password": password,
-                "invite": link,
-                "consent": "true",
-                "date_of_birth": "1991-04-06",
-                "gift_code_sku_id": "",
-                "captcha_key": captchakey,
-                }
-
-    req = httpx.post("https://discord.com/api/v9/auth/register", headers=header3, proxies=proxies, json=payload, timeout=10)
-
-    token = req.json()['token']
-
-    print_info("Registered: " + token)
-
-    def join(token, link):
-        header = {"authorization": token}
-        r = requests.post("https://discord.com/api/v8/invites/{}".format(link), proxies=proxies, headers=header1)
-
-    codes = open('generated_tokens.txt', 'a')
-    codes.write('\n' + token)
-    codes.close()
-    print_important("Saved token to generated_tokens.txt. " + "(" + token + ")")
+def check(proxies):
+        with open('nitro-codes.txt', 'r') as file:
+            data = file.read().splitlines()
+        for line in data:
+            if '/' in line:
+                nitro_chosen = None
+                nitrosplit = line.split('/')
+                for thing in nitrosplit:
+                        if '.' in thing:
+                            if len(thing) > 18:
+                                line = thing
+                            if line == None:
+                                print_error('Error finding token', Fore.RED)
+                        else:
+                            if thing != ' ':
+                                if thing !='https:':
+                                    url = f"https://discordapp.com/api/v9/entitlements/gift-codes/{thing}?with_application=false&with_subscription_plan=true"
+                                    response = requests.get(url, proxies=proxies) 
+                                    if response.status_code == 200:  
+                                        print_info(f" Valid | {thing}")
+                                        codes = open('valid-nitro-codes.txt', 'a')
+                                        codes.write("https://promos.discord.gg/" + thing + "\n")
+                                        codes.close()
+                                else:
+                                    continue
+                            else:
+                                print_error(f" Invalid | {thing} ")
+                                continue
 
 def main_screen():
+    Title = f"Globy Gen | Current Balance: {balance()}"
+    ctypes.windll.kernel32.SetConsoleTitleW(Title)
     os.system('cls')
     print('')
     print(f"{Fore.BLUE} $$$$$$\\  $$\\           $$\\                     ".center(width))
@@ -291,13 +302,12 @@ def main_screen():
     print(f"{Fore.LIGHTBLUE_EX}                                   \\$$$$$$  |     ".center(width))
     print(f"{Fore.LIGHTWHITE_EX}                                    \\______/       ".center(width))
     print('')
-    print(f"{Fore.LIGHTWHITE_EX}Ver 0.4".center(width))
+    print(f"{Fore.LIGHTWHITE_EX}Ver 0.5".center(width))
     print('')
 
-target_url = 'https://licensekeys.essazwamiwidzowie.repl.co/keys.txt'
-for line in request.urlopen(target_url):
-    something = line.decode('utf-8')
-else:
+def start():
+    Title = f"Globy Gen | Current Balance: {balance()}"
+    ctypes.windll.kernel32.SetConsoleTitleW(Title)
     os.system('cls')
     print('')
     print(f"{Fore.BLUE} $$$$$$\\  $$\\           $$\\                     ".center(width))
@@ -312,7 +322,7 @@ else:
     print(f"{Fore.LIGHTBLUE_EX}                                   \\$$$$$$  |     ".center(width))
     print(f"{Fore.LIGHTWHITE_EX}                                    \\______/       ".center(width))
     print('')
-    print(f"{Fore.LIGHTWHITE_EX}Made by bambiku#7777, version: {Fore.LIGHTBLUE_EX}0.4".center(width))
+    print(f"{Fore.LIGHTWHITE_EX}Made by bambiku#7777, version: {Fore.LIGHTBLUE_EX}0.5".center(width))
     print('')
     print(gratient.blue("Loading...".center(width)))
     print('')
@@ -322,15 +332,19 @@ else:
     main_screen()
     print(gratient.blue("1 Discord Promotion Gen".center(width)))
     print(gratient.blue("2 Member Botter (tukan gen)".center(width)))
-    print(gratient.blue("3 Credits".center(width)))
+    print(gratient.blue("3 Promotion Checker".center(width)))
+    print(gratient.blue("6 Credits".center(width)))
     option1 = input(f"{Fore.GREEN}\n".center(width))
     if option1 == '1':
         main_screen()
-        threads = int(input(gratient.blue("Threads: ".center(width))))
+        print(gratient.blue("Threads: \n".center(width)))
+        threads = int(input(f"{Fore.GREEN}\n".center(width)))
         main_screen()
         for i in range(threads):
-            t = Thread(target=generate)
+            proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
+            t = Thread(target=generate, args=[proxyDict])
             t.start()
+            #print_info(proxyDict)
     else:
         if option1 == '2':
             main_screen()
@@ -341,14 +355,30 @@ else:
             link2 = input(f"{Fore.GREEN}\n".center(width))
             main_screen()
             for i in range(threads):
-                t = Thread(target=genandjoin, kwargs={'link': link2})
+                proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
+                t = Thread(target=genandjoin, kwargs={'link': link2, 'proxies': proxyDict})
                 t.start()
+        elif option1 == '6':
+                main_screen()
+                print_info(f"{Fore.GREEN} Made by {Fore.LIGHTWHITE_EX}bambiku#777")
+                time.sleep(5)
+                exit(0)
+        elif option1 == '5':
+                main_screen()
+                print_info("lmfao dont be skid, buy Globy X in discord.gg/tokenz")
+        elif option1 == '3':
+                main_screen()
+                proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
+                check(proxyDict)
+                time.sleep(5)
+                exit(0)
+        elif option1 == '4':
+                main_screen()
+                print_info("lmfao dont be skid, buy Globy X in discord.gg/tokenz")
         else:
-            if option1 == '3':
-                print(f"{Fore.GREEN} Made by {Fore.LIGHTWHITE_EX}bambiku#777")
-                time.sleep(5)
-                exit(0)
-            else:
-                print(gratient.blue("Invalid Option.".center(width)))
-                time.sleep(5)
-                exit(0)
+            print(gratient.blue("Invalid Option.".center(width)))
+            time.sleep(5)
+            exit(0)
+
+if __name__ == '__main__':
+    start()
