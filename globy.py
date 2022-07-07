@@ -53,6 +53,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 register_link = "https://discordapp.com/api/auth/register"
 
 def generate(proxy):
+    proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
     tokens = open('tokens.txt').read().splitlines()
     DISCORD_TOKEN = random.choice(tokens)
     if ':' in DISCORD_TOKEN:
