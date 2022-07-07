@@ -52,8 +52,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 register_link = "https://discordapp.com/api/auth/register"
 
-def generate(proxy):
-    proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
+def generate():
+    proxy = random.choice(open("proxies.txt","r").read().splitlines())
+    proxyDict = {"http://": f"http://{proxy}"}
     tokens = open('tokens.txt').read().splitlines()
     DISCORD_TOKEN = random.choice(tokens)
     if ':' in DISCORD_TOKEN:
@@ -79,32 +80,32 @@ def generate(proxy):
     username = 'Globy ' + randomStr
     password = randomStr
     print_info(f"Creating account... ({email})")
-    register = requests.post("https://medal.tv/api/users", json={"email":email,  "userName":username,  "password":password}, headers={"Accept":"application/json",  "Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT}, proxies=proxy)
+    register = requests.post("https://medal.tv/api/users", json={"email":email,  "userName":username,  "password":password}, headers={"Accept":"application/json",  "Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT}, proxies=proxyDict)
     if not register.ok:
         print_error(register.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate(proxyDict)
-    authenticate = requests.post("https://medal.tv/api/authentication", json={"email":email,"password":password},headers={"Accept":"application/json","Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT}, proxies=proxy)
+        generate()
+    authenticate = requests.post("https://medal.tv/api/authentication", json={"email":email,"password":password},headers={"Accept":"application/json","Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT}, proxies=proxyDict)
     if not authenticate.ok:
         print_error(authenticate.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate(proxyDict)
+        generate()
     authResp = json.loads(authenticate.text)
     token = authResp['userId'] + ',' + authResp['key']
-    discordOauth = requests.post('https://medal.tv/social-api/connections', json={'provider': 'discord'}, headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxies)
+    discordOauth = requests.post('https://medal.tv/social-api/connections', json={'provider': 'discord'}, headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxyDict)
     if not discordOauth.ok:
         print_error(discordOauth.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate(proxyDict)
-    doOauth = requests.post((json.loads(discordOauth.text)['loginUrl']), headers={'Authorization':DISCORD_TOKEN,  'Content-Type':'application/json'}, json={'permissions':'0',  'authorize':'true'}, proxies=proxy)
+        generate()
+    doOauth = requests.post((json.loads(discordOauth.text)['loginUrl']), headers={'Authorization':DISCORD_TOKEN,  'Content-Type':'application/json'}, json={'permissions':'0',  'authorize':'true'}, proxies=proxyDict)
     if not doOauth.ok:
         print_error(doOauth.text)
         print_info('Retrying...')
         time.sleep(0.01)
-        generate(proxyDict)
+        generate()
     medalLink = json.loads(doOauth.text)['location']
     oauthDone = requests.get(medalLink)
     oauthResponse = parse_qs(urlparse(oauthDone.url).query)
@@ -112,8 +113,8 @@ def generate(proxy):
         print_error(oauthResponse['message'][0])
         print_info('Retrying...')
         time.sleep(0.01)
-        generate(proxyDict)
-    nitroLink = requests.get("https://medal.tv/api/social/discord/nitroCode", headers={"Accept":"application/json",  "Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT,  "X-Authentication":token}, proxies=proxy)
+        generate()
+    nitroLink = requests.get("https://medal.tv/api/social/discord/nitroCode", headers={"Accept":"application/json",  "Content-Type":"application/json",  "User-Agent":MEDAL_USER_AGENT,  "Medal-User-Agent":MEDAL_USER_AGENT,  "X-Authentication":token}, proxies=proxyDict)
     nitro = json.loads(nitroLink.text)
     print_detect(nitro)
     try:
@@ -131,13 +132,13 @@ def generate(proxy):
         email = randomStr + '@' + random.choice(emails)
         username = 'Globy ' + randomStr
         password = randomStr + '!1'
-        generate(proxyDict)
-        deleteRes = requests.delete(('https://medal.tv/api/users/' + authResp['userId'] + '/connections/discord'), headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxy)
+        generate()
+        deleteRes = requests.delete(('https://medal.tv/api/users/' + authResp['userId'] + '/connections/discord'), headers={'Accept':'application/json',  'Content-Type':'application/json',  'User-Agent':MEDAL_USER_AGENT,  'Medal-User-Agent':MEDAL_USER_AGENT,  'X-Authentication':token}, proxies=proxyDict)
         if not deleteRes.ok:
             print_error(deleteRes.text)
             print_info('Retrying...')
             time.sleep(0.01)
-            generate(proxyDict)
+            generate()
 
 
 def getCurrentTime():
