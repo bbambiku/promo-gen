@@ -212,9 +212,7 @@ def get_headers():
     }
 
 def genandjoin(link, proxies):
-    #proxies = open('proxies.txt','r').read().splitlines()
-    #proxies = [{'http://' : f'{proxy}'} for proxy in proxies]
-
+    # patached, will work on an update
     username = "Globy | " + random_char(10)
     email =  random_char(9) + "@" + random_char(4) + ".com"
     password = random_char(11)
