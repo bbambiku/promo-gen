@@ -366,6 +366,7 @@ def start():
                 proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
                 t = Thread(target=genandjoin, kwargs={'link': link2, 'proxies': proxyDict})
                 t.start()
+                time.sleep(0.3)
         elif option1 == '6':
                 main_screen()
                 print_info(f"{Fore.GREEN} Made by {Fore.LIGHTWHITE_EX}bambiku#777")
