@@ -33,11 +33,6 @@ width = os.get_terminal_size().columns
 now = datetime.datetime.utcnow()
 printSpaces = ''
 s = requests.session()
-proxy = set()
-with open('proxies.txt', 'r') as (f):
-    file_lines1 = f.readlines()
-    for line1 in file_lines1:
-        proxy.add(line1.strip())
 
 with open('config.json') as r:
 	config = json.load(r)
