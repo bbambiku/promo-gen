@@ -207,57 +207,7 @@ def get_headers():
     }
 
 def genandjoin(link, proxies):
-    # patached, will work on an update
-    username = "Globy | " + random_char(10)
-    email =  random_char(9) + "@" + random_char(4) + ".com"
-    password = random_char(11)
-    headers = get_headers()
-    os, browser, headers['user-agent'], browserver, osvers = get_user_agent()
-    r = requests.Session()
-    fingerprint_json = requests.get("https://discordapp.com/api/v9/experiments",
-                                    timeout=10, proxies = proxies, headers=get_headers() , verify=False).json()
-    fingerprint = fingerprint_json["fingerprint"]
-    xsuperprop = base64.b64encode(json.dumps(get_super_properties(
-        os, browser, headers['user-agent'], browserver, osvers, 36127), separators=",:").encode()).decode()
-    headers['X-Super-Properties'] = xsuperprop
-
-    API_KEY = f"{captcha_api_key}"
-    sitekey = "f5561ba9-8f1e-40ca-9b5b-a0b3f719ef34"
-    #sitekey = "3ceb8624-1970-4e6b-91d5-70317b70b651"
-
-    solver = captcha_harvesters(solving_site=1, api_key=f"{API_KEY}", sitekey=f"{sitekey}", captcha_type="hcap", captcha_url="https://discord.com/register")
-    recaptcha_answer = solver.get_token()
-
-    Title = f"Globy Gen | Current Balance: {balance()}"
-    ctypes.windll.kernel32.SetConsoleTitleW(Title)
-    print_info(f"Captcha Solved: {balance()}")
-
-    payload = {
-        'fingerprint': fingerprint,
-        'email': email,
-        'username': username,
-        'password': password,
-        'invite': f"{link}",
-        'captcha_key': recaptcha_answer,
-        'consent': True,
-        "date_of_birth": "2001-01-01",
-        'gift_code_sku_id': None
-    }
-    payload = json.dumps(payload)
-    response = r.post('https://discordapp.com/api/v9/auth/register',
-                json=payload, proxies=proxies,headers=headers, timeout=15000, verify=False)
-    #if 'token' in str(response):
-    try:
-        sex = response.json()
-        token = sex['token']
-        print_info("Registered: " + token)
-        codes = open('generated_tokens.txt', 'a')
-        codes.write(f"{email}:{password}:{token}\n")
-        codes.close()
-        print_important("Saved token to generated_tokens.txt. " + "(" + token + ")")
-    except Exception as e:
-        print_error(f'Something went wrong :skull:')
-        print_error(f'{e}')
+    print_error('Error, this is patached for the mean time.', Fore.RED)
 
 def check(proxies):
         with open('nitro-codes.txt', 'r') as file:
