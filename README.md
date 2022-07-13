@@ -14,8 +14,7 @@ Dont ask me why I made that
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-
-## Features
+### <img src="https://c.tenor.com/-iJ1olfz7qsAAAAC/boost-discord.gif" width="50"> Features 
 
 - very proffesional look
 - very fast (profit)
@@ -33,6 +32,7 @@ Dont ask me why I made that
 ## Authors
 
 - [@bbambiku](https://www.github.com/bbambiku)
+- [@Dominick](https://www.github.com/OhEU)
 - your mom
 
 
