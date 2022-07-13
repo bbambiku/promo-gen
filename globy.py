@@ -349,10 +349,8 @@ def start():
         threads = int(input(f"{Fore.GREEN}\n".center(width)))
         main_screen()
         for i in range(threads):
-            proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
             t = Thread(target=generate)
             t.start()
-            #print_info(proxyDict)
     else:
         if option1 == '2':
             main_screen()
@@ -363,8 +361,7 @@ def start():
             link2 = input(f"{Fore.GREEN}\n".center(width))
             main_screen()
             for i in range(threads):
-                proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
-                t = Thread(target=genandjoin, kwargs={'link': link2, 'proxies': proxyDict})
+                t = Thread(target=genandjoin, kwargs={'link': link2, 'proxies': proxies})
                 t.start()
                 time.sleep(0.3)
         elif option1 == '6':
@@ -377,8 +374,7 @@ def start():
                 print_info("lmfao dont be skid, buy Globy X in discord.gg/tokenz")
         elif option1 == '3':
                 main_screen()
-                proxy = random.choice(open("proxies.txt","r").read().splitlines()); proxyDict = {"http://": f"http://{proxy}"}
-                check(proxyDict)
+                check(proxies)
                 time.sleep(5)
                 exit(0)
         elif option1 == '4':
