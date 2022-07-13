@@ -299,16 +299,7 @@ def start():
     else:
         if option1 == '2':
             main_screen()
-            print(gratient.blue("Threads: \n".center(width)))
-            threads = int(input(f"{Fore.GREEN}\n".center(width)))
-            main_screen()
-            print(gratient.blue("Server Link: \n".center(width)))
-            link2 = input(f"{Fore.GREEN}\n".center(width))
-            main_screen()
-            for i in range(threads):
-                t = Thread(target=genandjoin, kwargs={'link': link2, 'proxies': proxies})
-                t.start()
-                time.sleep(0.3)
+            print_error('Error, this is patached for the mean time.', Fore.RED)
         elif option1 == '6':
                 main_screen()
                 print_info(f"{Fore.GREEN} Made by {Fore.LIGHTWHITE_EX}bambiku#777")
