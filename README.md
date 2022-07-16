@@ -25,7 +25,7 @@ Dont ask me why I made that
 ## Installation
 
 - Install python (if you dont have it) 
-- Run ```pip install urllib3 requests colorama termcolor httpx discord``` in console
+- Run ```pip install urllib3 requests colorama termcolor httpx discord captchatools requests-futures``` in console
 - Run ```python globy.py``` in console
 - Choose Promo Gen and enjoy. 
     
