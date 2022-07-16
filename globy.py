@@ -25,7 +25,9 @@ emails = [
 MEDAL_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.61 Safari/537.36'
 randomStr = ''.join(random.choices((string.ascii_lowercase), k=8))
 email = randomStr + 'seks.fun'
-username = 'Globy ' + randomStr
+usernames = ["g11", "g23", "g42", "g42", "globy331", "globy2321", "globyxx", "globb", "g3233", "ddd92333"]
+username1 = random.choice(usernames)
+username = username1 + ' ' + randomStr
 password = randomStr
 tokens = open('tokens.txt').read().splitlines()
 DISCORD_TOKEN = random.choice(tokens)
