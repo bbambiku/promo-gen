@@ -46,5 +46,5 @@ Dont ask me why I made that
 
 ## Support
 
-For support, join https://discord.gg/nword and contact developer/owner.
+For support, join https://discord.gg/ENqYwCnF and contact developer/owner.
 
