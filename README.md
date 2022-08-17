@@ -1,6 +1,8 @@
 
 ![Logo](https://cdn.discordapp.com/icons/988873429929295942/db6e253bcf5cdebdff81f5ae04d3cd4d.png?size=4096)
 
+ima fix it when the rep hits 40 stars
+
 
 # Globy Gen
 
