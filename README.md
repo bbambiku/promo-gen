@@ -1,7 +1,7 @@
 
 ![Logo](https://cdn.discordapp.com/icons/988873429929295942/db6e253bcf5cdebdff81f5ae04d3cd4d.png?size=4096)
 
-[https://discord.gg/n1gger](https://discord.gg/w8HDZSt6)
+[Click Here](https://discord.gg/eutopia/
 ima fix it when the rep hits 40 stars
 
 
@@ -49,5 +49,5 @@ Dont ask me why I made that
 
 ## Support
 
-For support join https://discord.gg/w8HDZSt6 and contact developer/owner.
+For support join https://discord.gg/eutopia and contact developer/owner.
 
