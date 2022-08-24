@@ -34,9 +34,8 @@ Dont ask me why I made that
     
 ## Authors
 
-- [@bbambiku](https://www.github.com/bbambiku)
-- [@Dominick](https://www.github.com/OhEU)
-- your mom
+- [me](https://www.github.com/bbambiku)
+- memexurer
 
 
 ## Used By
