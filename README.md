@@ -1,17 +1,10 @@
 
 ![Logo](https://cdn.discordapp.com/icons/988873429929295942/db6e253bcf5cdebdff81f5ae04d3cd4d.png?size=4096)
 
-[Click Here](https://discord.gg/eutopia) 
-ima fix it when the rep hits 40 stars
-
 
 # Globy Gen
 
-Discord Promotion Generator using medal.tv api.
-Made by me ofc lmao
-
-Dont ask me why I made that
-
+rip gen fr. (promotion ended like 4 month ago idk)
 
 ## License
 
@@ -19,7 +12,7 @@ Dont ask me why I made that
 
 ### <img src="https://c.tenor.com/-iJ1olfz7qsAAAAC/boost-discord.gif" width="50"> Features 
 
-- very proffesional look
+- very proffesional look (jk)
 - very fast (profit)
 - fre money :shock:!!1
 - people love you
